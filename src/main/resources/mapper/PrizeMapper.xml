@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.javatribe.lottery.mapper.PrizeMapper">
+    <resultMap id="prizeItemResultMap" type="org.javatribe.lottery.entity.PrizeItem">
+        <id column="id" property="id"></id>
+        <result column="prize_name" property="prizeName"></result>
+        <result column="start_time" property="startTime"></result>
+        <result column="end_time" property="endTime"></result>
+        <collection property="items" ofType="org.javatribe.lottery.entity.Item">
+            <id column="tid" property="id"></id>
+            <result column="item_name" property="itemName"></result>
+            <result column="amount" property="amount"></result>
+            <result column="prize_id" property="prizeId"></result>
+        </collection>
+    </resultMap>
+    <resultMap id="prizeResultMap" type="org.javatribe.lottery.entity.Prize">
+        <id column="id" property="id"></id>
+        <result column="prize_name" property="prizeName"></result>
+        <result column="start_time" property="startTime"></result>
+        <result column="end_time" property="endTime"></result>
+    </resultMap>
+
+    <insert id="insertPrize" parameterType="org.javatribe.lottery.entity.Prize"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id" >
+        insert into t_prize
+        (prize_name,start_time,end_time)
+        values
+        (#{prizeName},#{startTime},#{endTime});
+    </insert>
+
+    <select id="queryPrizeAndItem" resultMap="prizeItemResultMap">
+        select *,t.id tid from t_prize p, t_item t
+        where
+        p.id = #{prizeId} and t.prize_id = p.id;
+    </select>
+    <select id="queryPrizes" resultMap="prizeResultMap">
+        select *
+        from t_prize;
+    </select>
+
+</mapper>
