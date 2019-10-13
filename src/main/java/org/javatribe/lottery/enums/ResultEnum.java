@@ -12,7 +12,9 @@ public enum ResultEnum {
     ERROR(40000, "没有找到api"),
     NOT_LOGIN(40001, "您还没有登录"),
     NOT_PRIZE(40002, "没有抽奖活动"),
-    ERROR_MD5(40003, "MD5错误");
+    ERROR_MD5(40003, "MD5错误"),
+    NOT_IN_TIME(40004, "不在抽奖时间"),
+    SERVER_ERROR(50000, "服务器出错");
 
     private Integer code;
     private String msg;

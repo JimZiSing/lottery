@@ -10,6 +10,8 @@ public interface ILotteryService {
      * 抽奖方法
      * @param openid
      * @param prizeId
+     * @param id
+     * @return
      */
-    void luckDraw(String openid, Integer prizeId);
+    String luckDraw(String openid, Integer prizeId, Integer id);
 }

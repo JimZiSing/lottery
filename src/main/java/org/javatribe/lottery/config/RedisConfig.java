@@ -1,6 +1,7 @@
 package org.javatribe.lottery.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
+import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -23,7 +24,11 @@ public class RedisConfig {
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) throws UnknownHostException {
         RedisTemplate<Object, Object> template = new RedisTemplate();
         template.setConnectionFactory(redisConnectionFactory);
-        template.setDefaultSerializer(new FastJsonRedisSerializer<>(Object.class));
+        //redis开启事务
+        template.setEnableTransactionSupport(true);
+        template.setDefaultSerializer(new GenericFastJsonRedisSerializer());
+        template.afterPropertiesSet();
         return template;
     }
+
 }

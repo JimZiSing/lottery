@@ -53,6 +53,7 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
                     Claims claims = JwtUtils.parseJWT(token);
                     // 添加userId
                     ((ParameterServletRequestWrapper) request).addParameter("openid", claims.get("openid"));
+                    ((ParameterServletRequestWrapper) request).addParameter("userId", claims.get("userId"));
                     return true;
                 } catch (Exception e) {
                     e.printStackTrace();

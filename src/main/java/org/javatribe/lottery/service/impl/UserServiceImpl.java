@@ -11,8 +11,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * userService层接口实现
+ *
  * @author JimZiSing
  */
 @Service
@@ -23,10 +26,11 @@ public class UserServiceImpl implements IUserService {
     UserMapper userMapper;
     @Autowired
     RedisTemplate redisTemplate;
+
     @Override
     public User addUser(User user) {
         User resultUser = selectUserByOpenid(user.getOpenid());
-        if (resultUser == null){
+        if (resultUser == null) {
             userMapper.insertUser(user);
             return user;
         }
@@ -35,14 +39,19 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User selectUserByOpenid(String openid) {
-        User user = (User) redisTemplate.opsForValue().get("user:" + openid);
-        if (user!= null){
-            return user;
-        }
-        user = userMapper.queryUserByOpenid(openid);
-        if (user != null){
-            redisTemplate.opsForValue().set("user:"+openid,user);
-        }
+//        User user = (User) redisTemplate.opsForValue().get("USER:" + openid);
+//        if (user!= null){
+//            return user;
+//        }
+        User user = userMapper.queryUserByOpenid(openid);
+//        if (user != null){
+//            redisTemplate.opsForValue().set("user:"+openid,user);
+//        }
         return user;
+    }
+
+    @Override
+    public List<User> selectUsers() {
+        return userMapper.queryAllUser();
     }
 }

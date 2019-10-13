@@ -1,9 +1,6 @@
 package org.javatribe.lottery.entity;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import org.javatribe.lottery.enums.ResultEnum;
 
 /**
@@ -12,7 +9,6 @@ import org.javatribe.lottery.enums.ResultEnum;
  * @author JimZiSing
  */
 @Data
-@ToString
 public class Result<T> {
     private Integer code;
     private T data;

@@ -1,5 +1,6 @@
 package org.javatribe.lottery.service;
 
+import org.javatribe.lottery.entity.Page;
 import org.javatribe.lottery.entity.Prize;
 import org.javatribe.lottery.entity.PrizeItem;
 
@@ -27,6 +28,14 @@ public interface IPrizeService {
     /**
      * 查询抽奖列表
      * @return
+     * @param pageNumber
+     * @param pageSize
      */
-    List<Prize> selectPrizes();
+    Page selectPrizePage(int pageNumber, int pageSize);
+
+    /**
+     * 查询总记录数
+     * @return
+     */
+    int selectTotalRecord();
 }

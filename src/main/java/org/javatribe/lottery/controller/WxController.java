@@ -84,7 +84,7 @@ public class WxController {
             return Result.error(400001, e.getMessage());
         }
         Map map = new HashMap(2);
-        map.put("id", user.getId());
+        map.put("userId", user.getId());
         map.put("openid", user.getOpenid());
         String token = null;
         try {

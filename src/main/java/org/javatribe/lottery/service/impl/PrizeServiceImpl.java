@@ -1,14 +1,19 @@
 package org.javatribe.lottery.service.impl;
 
+import org.javatribe.lottery.entity.Item;
+import org.javatribe.lottery.entity.Page;
 import org.javatribe.lottery.entity.Prize;
 import org.javatribe.lottery.entity.PrizeItem;
 import org.javatribe.lottery.mapper.PrizeMapper;
 import org.javatribe.lottery.service.IPrizeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,27 +33,45 @@ public class PrizeServiceImpl implements IPrizeService {
 
     @Override
     public PrizeItem selectPrizeAndItem(Integer prizeId) {
-        PrizeItem prizeItem = (PrizeItem) redisTemplate.opsForValue().get("prize:" + prizeId);
+        PrizeItem prizeItem = (PrizeItem) redisTemplate.opsForValue().get("PRIZE:" + prizeId);
         //二重加锁机制，防止多次查询数据库。
         if (null == prizeItem) {
-                prizeItem = (PrizeItem) redisTemplate.opsForValue().get("prize:" + prizeId);
-                synchronized (LOCK) {
-                    if (null == prizeItem) {
-                        prizeItem = prizeMapper.queryPrizeAndItem(prizeId);
-                        redisTemplate.opsForValue().set("prize:" + prizeId, prizeItem, prizeItem.getEndTime() - System.currentTimeMillis());
+            prizeItem = (PrizeItem) redisTemplate.opsForValue().get("PRIZE:" + prizeId);
+            synchronized (LOCK) {
+                if (null == prizeItem) {
+                    prizeItem = prizeMapper.queryPrizeAndItem(prizeId);
+                    redisTemplate.opsForValue().set("PRIZE:" + prizeId, prizeItem/*,
+                            prizeItem.getEndTime() - System.currentTimeMillis()*/);
+                    int amount = 0;
+                    for (Item item : prizeItem.getItems()) {
+                        amount += item.getAmount();
                     }
+                    redisTemplate.opsForValue().set("PRIZE_TOTAL_AMOUNT:" + prizeId, amount);
                 }
+            }
         }
         return prizeItem;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addPrize(Prize prize) {
         prizeMapper.insertPrize(prize);
     }
 
     @Override
-    public List<Prize> selectPrizes() {
-        return prizeMapper.queryPrizes();
+    public Page selectPrizePage(int pageNumber, int pageSize) {
+        pageSize = pageSize <= 0 ? 8 : pageSize;
+        pageNumber = pageNumber <= 0 ? 1 : pageNumber;
+        int totalRecord = selectTotalRecord();
+        int totalPage = totalRecord / pageSize + totalRecord % pageSize > 0 ? 1 : 0;
+        List<Prize> prizes = prizeMapper.queryPrizes((pageNumber - 1) * pageSize, pageSize);
+        return new Page(totalRecord, pageSize, totalPage, pageNumber, prizes);
+    }
+
+    @Override
+    public int selectTotalRecord() {
+        int totalRecord = prizeMapper.selectTotalRecord();
+        return totalRecord;
     }
 }

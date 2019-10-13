@@ -1,5 +1,6 @@
 package org.javatribe.lottery.controller;
 
+import org.javatribe.lottery.entity.Page;
 import org.javatribe.lottery.entity.Prize;
 import org.javatribe.lottery.entity.Result;
 import org.javatribe.lottery.service.IPrizeService;
@@ -18,8 +19,8 @@ public class PrizeController {
     IPrizeService prizeService;
 
     @GetMapping("/api/prizes")
-    public Result getPrizes() {
-        List<Prize> prizes = prizeService.selectPrizes();
-        return Result.success(prizes);
+    public Result getPrizes(int pageNumber,int pageSize) {
+        Page<Prize> prizePage = prizeService.selectPrizePage(pageNumber,pageSize);
+        return Result.success(prizePage);
     }
 }

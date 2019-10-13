@@ -3,7 +3,6 @@ package org.javatribe.lottery.entity;
 import java.io.Serializable;
 
 import lombok.Data;
-import lombok.ToString;
 
 
 /**
@@ -15,7 +14,6 @@ import lombok.ToString;
     
 
 @Data
-@ToString
 public class Item implements Serializable {
     private static final long serialVersionUID = -38168543741356184L;
             

@@ -24,6 +24,15 @@ public interface PrizeMapper {
     /**
      * 查询抽奖列表
      * @return
+     * @param begin
+     * @param pageSize
      */
-    List<Prize> queryPrizes();
+    List<Prize> queryPrizes(int begin, int pageSize);
+
+    /**
+     * 查询总记录数
+     * @return
+     */
+    int selectTotalRecord();
+
 }

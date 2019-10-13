@@ -37,7 +37,11 @@
     </select>
     <select id="queryPrizes" resultMap="prizeResultMap">
         select *
-        from t_prize;
+        from t_prize
+        limit #{begin},#{pageSize}
+    </select>
+    <select id="selectTotalRecord" resultType="java.lang.Integer">
+        select count(*) from t_prize;
     </select>
 
 </mapper>

@@ -1,11 +1,9 @@
 package org.javatribe.lottery.entity;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.List;
-
 import lombok.Data;
-import lombok.ToString;
+
+import java.io.Serializable;
+import java.util.List;
 
 
 /**
@@ -17,7 +15,6 @@ import lombok.ToString;
     
 
 @Data
-@ToString
 public class PrizeItem implements Serializable {
     private static final long serialVersionUID = -35499733904590469L;
 
@@ -39,4 +36,6 @@ public class PrizeItem implements Serializable {
     */
     List<Item> items;
 
+    public PrizeItem() {
+    }
 }

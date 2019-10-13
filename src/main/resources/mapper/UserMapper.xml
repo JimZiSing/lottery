@@ -24,5 +24,8 @@
         openid = #{openid}
 
     </select>
+    <select id="queryAllUser" resultType="org.javatribe.lottery.entity.User">
+        select * from t_user;
+    </select>
 
 </mapper>

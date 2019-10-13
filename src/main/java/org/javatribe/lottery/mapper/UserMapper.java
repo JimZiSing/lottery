@@ -3,6 +3,8 @@ package org.javatribe.lottery.mapper;
 import org.javatribe.lottery.entity.User;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 处理User表
  * @author JimZiSing
@@ -23,4 +25,6 @@ public interface UserMapper {
      * @return
      */
     User queryUserByOpenid(String openid);
+
+    List<User> queryAllUser();
 }
