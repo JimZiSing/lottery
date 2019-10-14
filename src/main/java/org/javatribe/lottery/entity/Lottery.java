@@ -25,10 +25,6 @@ public class Lottery implements Serializable {
      */        
     private Long createTime;
     /** 
-     * 参与抽奖
-     */        
-    private Integer prizeId;
-    /** 
      * 所中奖项
      */        
     private Integer itemId;

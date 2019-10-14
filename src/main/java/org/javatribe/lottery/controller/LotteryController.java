@@ -36,16 +36,16 @@ public class LotteryController {
             Integer prizeId) throws Exception {
         log.info("用户："+userId+" 抽奖");
         //采用异步请求
-//        Callable<Result> callable = new Callable<Result>() {
-//            @Override
-//            public Result call() throws Exception {
-//                String result = lotteryService.luckDraw(openid, userId, prizeId);
-//                return Result.success(result);
-//            }
-//        };
-//        return callable.call();
-        String result = lotteryService.luckDraw(openid, userId, prizeId);
-        return Result.success(result);
+        Callable<Result> callable = new Callable<Result>() {
+            @Override
+            public Result call() throws Exception {
+                String result = lotteryService.luckDraw(openid, userId, prizeId);
+                return Result.success(result);
+            }
+        };
+        return callable.call();
+//        String result = lotteryService.luckDraw(openid, userId, prizeId);
+//        return Result.success(result);
     }
 
 }

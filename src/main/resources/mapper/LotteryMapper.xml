@@ -13,10 +13,9 @@
     <insert id="insertLottery" parameterType="org.javatribe.lottery.entity.Lottery"
             useGeneratedKeys="true" keyProperty="id" keyColumn="id" >
         insert into t_lottery
-        (user_id,prize_id,create_time,item_id)
+        (user_id,create_time,item_id)
         values
-        (#{userId},#{prizeId},#{createTime}
-        <if test="#{itemId} != null">,#{itemId} </if>);
+        (#{userId},#{createTime},#{itemId});
     </insert>
 
     <!--<select id="queryUserByOpenid" resultMap="userResultMap">-->
