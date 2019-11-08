@@ -12,6 +12,7 @@
             <id column="tid" property="id"></id>
             <result column="item_name" property="itemName"></result>
             <result column="amount" property="amount"></result>
+            <result column="surplus" property="surplus"></result>
             <result column="prize_id" property="prizeId"></result>
         </collection>
     </resultMap>
@@ -42,6 +43,11 @@
     </select>
     <select id="selectTotalRecord" resultType="java.lang.Integer">
         select count(*) from t_prize;
+    </select>
+    <select id="selectPrizeSurplus" resultType="java.lang.Integer">
+        select sum(surplus)
+        from t_item
+        where prize_id = #{prizeId}
     </select>
 
 </mapper>

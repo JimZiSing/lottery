@@ -38,4 +38,11 @@ public interface IPrizeService {
      * @return
      */
     int selectTotalRecord();
+
+    /**
+     * 查询抽奖剩余的数量
+     * @param prizeId
+     * @return
+     */
+    int selectPrizeSurplus(Integer prizeId);
 }

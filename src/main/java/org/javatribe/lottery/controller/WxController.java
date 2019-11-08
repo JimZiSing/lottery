@@ -1,15 +1,19 @@
 package org.javatribe.lottery.controller;
 
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.javatribe.lottery.entity.Result;
 import org.javatribe.lottery.entity.User;
+import org.javatribe.lottery.entity.WxMessage;
 import org.javatribe.lottery.service.IWxService;
 import org.javatribe.lottery.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -95,4 +99,20 @@ public class WxController {
         System.out.println(token);
         return Result.success(token);
     }
+
+    /**
+     * 用于接收微信公众号接收的消息
+     * MediaType.APPLICATION_XML_VALUE 定义返回结果为xml
+     * @param msg
+     * @return
+     */
+    @PostMapping(value = "/check", produces = MediaType.APPLICATION_XML_VALUE)
+    @ResponseBody
+    public Object receiveWxMessage(@RequestBody WxMessage msg){
+        System.out.println(msg);
+        WxMessage returnMsg = wxService.receiveWxMessage(msg);
+        System.out.println(returnMsg);
+        return returnMsg;
+    }
+
 }

@@ -4,9 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.javatribe.lottery.mapper.ItemMapper">
     <resultMap id="itemResultMap" type="org.javatribe.lottery.entity.Item">
-            <id column="t.id" property="id"></id>
+            <id column="id" property="id"></id>
             <result column="item_name" property="itemName"></result>
             <result column="amount" property="amount"></result>
+            <result column="surplus" property="surplus" ></result>
+            <result column="prize_id" property="prizeId"></result>
     </resultMap>
 
     <insert id="insertItem" parameterType="org.javatribe.lottery.entity.Item"
@@ -16,6 +18,27 @@
         values
         (#{itemName},#{amount},#{prizeId});
     </insert>
+    <update id="updateItem">
+        update t_item
+        <set>
+            <if test="amount != null">
+                amount = #{amount},
+            </if>
+            <if test="itemName != null">
+                item_name = #{itemName},
+            </if>
+            <if test="surplus != null">
+                surplus = #{surplus},
+            </if>
+        </set>
+        where id = #{id}
+
+    </update>
+    <update id="updateItemDecrById">
+        update t_item
+        set surplus = surplus-1
+        where id = #{id}
+    </update>
 
     <select id="queryItemByPrizeId" resultMap="itemResultMap">
         select *

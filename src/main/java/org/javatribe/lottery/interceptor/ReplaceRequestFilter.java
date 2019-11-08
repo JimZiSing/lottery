@@ -21,8 +21,8 @@ import java.util.Map;
  *
  * @author JimZiSing
  */
-@Configuration
-@WebFilter(filterName = "replaceRequest", urlPatterns = "/**")
+//@Configuration
+//@WebFilter(filterName = "replaceRequest", urlPatterns = "/**")
 @Slf4j
 public class ReplaceRequestFilter extends OncePerRequestFilter {
     @Override

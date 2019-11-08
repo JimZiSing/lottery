@@ -22,4 +22,16 @@ public interface IItemService {
      * @return
      */
     void addItem(Item item);
+
+    /**
+     * 更新奖项信息
+     * @param item
+     */
+    void updateItem(Item item);
+
+    /**
+     * 减少剩余量减一
+     * @param id
+     */
+    void updateItemDecrById(Integer id);
 }

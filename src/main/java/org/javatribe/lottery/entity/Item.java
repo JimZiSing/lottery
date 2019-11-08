@@ -1,6 +1,7 @@
 package org.javatribe.lottery.entity;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import lombok.Data;
 
@@ -22,10 +23,18 @@ public class Item implements Serializable {
      * 奖项
      */        
     private String itemName;
-    /** 
+    /**
      * 可获奖人数
-     */        
-    private Integer amount;
+     */
+    private int amount;
+    /**
+     * 剩余奖项
+     */
+
+    private int surplus;
+    private AtomicInteger surplus1;
+
+
     /**
      * 所属抽奖
      */

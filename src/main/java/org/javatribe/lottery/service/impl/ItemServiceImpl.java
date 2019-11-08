@@ -3,8 +3,10 @@ package org.javatribe.lottery.service.impl;
 import org.javatribe.lottery.entity.Item;
 import org.javatribe.lottery.entity.PrizeItem;
 import org.javatribe.lottery.mapper.ItemMapper;
+import org.javatribe.lottery.mapper.UserMapper;
 import org.javatribe.lottery.service.IItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,5 +25,18 @@ public class ItemServiceImpl implements IItemService {
     @Override
     public void addItem(Item item) {
         itemMapper.insertItem(item);
+    }
+
+    @Override
+    @Async
+    public void updateItem(Item item) {
+        itemMapper.updateItem(item);
+    }
+
+    @Override
+    @Async
+    public void updateItemDecrById(Integer id) {
+        itemMapper.updateItemDecrById(id);
+
     }
 }

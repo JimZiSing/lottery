@@ -4,25 +4,30 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * httpclient 工具类 ，使用了httpclient 连接池
@@ -188,6 +193,47 @@ public class HttpClientUtil {
             }
         }
         Map map = JSONObject.parseObject(result,HashMap.class);
+        return map;
+    }
+
+    /**
+     * 做Post请求
+     *
+     * @param url
+     * @return
+     */
+    public static Map doPost(String url, String param) {
+        CloseableHttpClient httpClient = getHttpClient(true);
+        HttpPost httpPost = new HttpPost(url);
+        if (null != param) {
+            StringEntity stringEntity = new StringEntity(param, "UTF-8");
+            stringEntity.setContentType("application/json");
+            httpPost.setEntity(stringEntity);
+
+        }
+        //创建响应对象
+        CloseableHttpResponse response = null;
+        String result = "";
+        try {
+            // 执行请求，获得响应
+            response = httpClient.execute(httpPost);
+            // 获取响应实体
+            HttpEntity entity = response.getEntity();
+            // 获取响应信息
+            result = EntityUtils.toString(entity, "UTF-8");
+        } catch (Exception e) {
+            log.info("请求出现异常");
+        } finally {
+            if (null != response) {
+                try {
+                    EntityUtils.consume(response.getEntity());
+                    response.close();
+                } catch (IOException e) {
+                    log.warn("释放链接错误", e);
+                }
+            }
+        }
+        Map map = JSONObject.parseObject(result, HashMap.class);
         return map;
     }
 

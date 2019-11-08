@@ -7,8 +7,8 @@ import org.javatribe.lottery.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
+//import org.springframework.data.redis.core.RedisTemplate;
+//import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     UserMapper userMapper;
-    @Autowired
-    RedisTemplate redisTemplate;
+//    @Autowired
+//    RedisTemplate redisTemplate;
 
     @Override
     public User addUser(User user) {

@@ -1,5 +1,6 @@
 package org.javatribe.lottery.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.javatribe.lottery.entity.Prize;
 import org.javatribe.lottery.entity.PrizeItem;
 import org.springframework.stereotype.Repository;
@@ -35,4 +36,5 @@ public interface PrizeMapper {
      */
     int selectTotalRecord();
 
+    int selectPrizeSurplus(@Param("prizeId") Integer prizeId);
 }

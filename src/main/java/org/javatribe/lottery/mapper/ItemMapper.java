@@ -3,6 +3,8 @@ package org.javatribe.lottery.mapper;
 import org.javatribe.lottery.entity.Item;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * t_item表
  * @author JimZiSing
@@ -22,5 +24,17 @@ public interface ItemMapper {
      * @param prizeId
      * @return
      */
-    Item queryItemByPrizeId(Integer prizeId);
+    List<Item> queryItemByPrizeId(Integer prizeId);
+
+    /**
+     * 更新奖项信息
+     * @param item
+     */
+    void updateItem(Item item);
+
+    /**
+     * 奖项剩余量减一
+     * @param id
+     */
+    void updateItemDecrById(Integer id);
 }
