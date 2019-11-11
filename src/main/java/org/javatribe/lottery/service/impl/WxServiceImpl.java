@@ -85,15 +85,23 @@ public class WxServiceImpl implements IWxService {
         log.info("获取用户消息：" + userInfo);
         User user = new User();
         user.setOpenid((String) userInfo.get("openid"));
-        user.setNickname((String) userInfo.get("nickname"));
-        user.setHeadImgUrl((String) userInfo.get("headimgurl"));
+//        user.setNickname((String) userInfo.get("nickname"));
+//        user.setHeadImgUrl((String) userInfo.get("headimgurl"));
+        //保存用户信息
         return userService.addUser(user);
     }
 
+    /**
+     * 消息推送，推送中奖信息
+     * @param openid
+     * @param item
+     */
     @Override
     @Async
     public void sendLotteryResult(String openid, String item) {
+        //获取公众号accessToken
         String accessToken = getAccessToken();
+        //创建模板消息对象
         WxTemplate wxTemplate = new WxTemplate();
         wxTemplate.setTouser(openid);
         wxTemplate.setTemplate_id(templateId);
@@ -110,17 +118,21 @@ public class WxServiceImpl implements IWxService {
 
     @Override
     public WxMessage receiveWxMessage(WxMessage msg) {
+        //判断公众号是否接收到 "抽奖",实则返回用户的抽奖连接
         if ("抽奖".equals(msg.getContent()) || "抽奖".equals(msg.getEventKey())) {
             User user = userService.selectUserByOpenid(msg.getFromUserName());
             if (user == null) {
                 user = new User();
+                //保存用户的openid
                 user.setOpenid(msg.getFromUserName());
                 userService.addUser(user);
             }
+            //构造回复消息
             WxMessage returnMsg = new WxMessage();
             returnMsg.setToUserName(msg.getFromUserName());
             returnMsg.setFromUserName(msg.getToUserName());
             returnMsg.setMsgType("text");
+            //设置返回的信息，返回用户的抽奖连接
             returnMsg.setContent(pageAddress + msg.getFromUserName());
             returnMsg.setCreateTime(System.currentTimeMillis());
             return returnMsg;
@@ -151,13 +163,11 @@ public class WxServiceImpl implements IWxService {
         String accessToken = getAccessToken();
         System.out.println(accessToken);
         String url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=" + accessToken;
+        //配置二维码参数
         String param = "{\"expire_seconds\": 604800, \"action_name\": \"QR_STR_SCENE\", \"action_info\": {\"scene\": {\"scene_str\": \"抽奖\"}}}";
+        //请求生成二维码，并获取ticket
         Map map = HttpClientUtil.doPost(url, param);
         System.out.println(map);
-        /**
-         * {"expire_seconds": 604800, "action_name": "QR_STR_SCENE", "action_info": {"scene": {"scene_str": "test"}}}
-         */
-
         return map.get("ticket").toString();
     }
 }

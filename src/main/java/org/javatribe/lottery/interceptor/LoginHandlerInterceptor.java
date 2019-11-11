@@ -30,12 +30,12 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         log.info("interceptor");
-        String uri = request.getRequestURI();
-        log.info(uri);
-        boolean isDruid = uri.startsWith("/druid");
-        if (isDruid) {
-            return true;
-        }
+//        String uri = request.getRequestURI();
+//        log.info(uri);
+//        boolean isDruid = uri.startsWith("/druid");
+//        if (isDruid) {
+//            return true;
+//        }
         //如果不是映射到方法(controller的方法直接通过)
         if (!(handler instanceof HandlerMethod)) {
             return true;

@@ -9,28 +9,20 @@ import lombok.Data;
  * (User)实体类
  *
  * @author jimzising
- * @since 2019-09-11 19:48:01
+ * @since 2019-11-11 20:32:53
  */
     
 
 @Data
 public class User implements Serializable {
-    private static final long serialVersionUID = 715138750693442842L;
+    private static final long serialVersionUID = 418605312082384656L;
             
     private Integer id;
-            
+    /** 
+     * 用户唯一标识
+     */        
     private String openid;
             
-    private String nickname;
-            
-    private String headImgUrl;
+    private String ip;
 
-    public User() {
-    }
-
-    public User(String openid, String nickname, String headImgUrl) {
-        this.openid = openid;
-        this.nickname = nickname;
-        this.headImgUrl = headImgUrl;
-    }
 }

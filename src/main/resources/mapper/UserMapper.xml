@@ -5,17 +5,25 @@
 <mapper namespace="org.javatribe.lottery.mapper.UserMapper">
     <resultMap id="userResultMap" type="org.javatribe.lottery.entity.User">
         <id column="id" property="id"></id>
-        <result column="nickname" property="nickname"></result>
+<!--        <result column="nickname" property="nickname"></result>-->
         <result column="openid" property="openid"></result>
-        <result column="head_img_url" property="headImgUrl"></result>
+        <result column="ip" property="ip"></result>
+<!--        <result column="head_img_url" property="headImgUrl"></result>-->
     </resultMap>
 
+<!--    <insert id="insertUser" parameterType="org.javatribe.lottery.entity.User"-->
+<!--            useGeneratedKeys="true" keyProperty="id" keyColumn="id" >-->
+<!--        insert into t_user-->
+<!--        (openid,nickname,head_img_url)-->
+<!--        values-->
+<!--        (#{openid},#{nickname},#{headImgUrl})-->
+<!--    </insert>-->
     <insert id="insertUser" parameterType="org.javatribe.lottery.entity.User"
             useGeneratedKeys="true" keyProperty="id" keyColumn="id" >
         insert into t_user
-        (openid,nickname,head_img_url)
+        (openid,ip)
         values
-        (#{openid},#{nickname},#{headImgUrl})
+        (#{openid},#{ip})
     </insert>
 
     <select id="queryUserByOpenid" resultMap="userResultMap">
@@ -26,6 +34,11 @@
     </select>
     <select id="queryAllUser" resultType="org.javatribe.lottery.entity.User">
         select * from t_user;
+    </select>
+    <select id="queryUserByIp" resultType="org.javatribe.lottery.entity.User">
+        select * from t_user
+        where
+        ip = #{ip}
     </select>
 
 </mapper>

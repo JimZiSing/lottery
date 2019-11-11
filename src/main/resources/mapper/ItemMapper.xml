@@ -39,6 +39,11 @@
         set surplus = surplus-1
         where id = #{id}
     </update>
+    <update id="updateItemAmountTo0">
+        update t_item
+        set surplus = 0
+        where id = #{id}
+    </update>
 
     <select id="queryItemByPrizeId" resultMap="itemResultMap">
         select *

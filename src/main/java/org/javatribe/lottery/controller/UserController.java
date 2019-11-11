@@ -5,10 +5,13 @@ import org.javatribe.lottery.annotation.NeedToken;
 import org.javatribe.lottery.entity.Result;
 import org.javatribe.lottery.entity.User;
 import org.javatribe.lottery.service.IUserService;
+import org.javatribe.lottery.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.Callable;
 
 /**
  * @author JimZiSing
@@ -28,10 +31,18 @@ public class UserController {
         return Result.success(user);
     }
 
-    @PostMapping("/lottery")
+    /**
+     * 根据ip绑定用户
+     * @return
+     */
+    @GetMapping("/loading")
     @NeedToken
-    public Result lotteryDraw(String openid){
-        System.out.println(System.currentTimeMillis());
-        return Result.success();
+    public Result loading(HttpServletRequest request) throws Exception {
+        Callable<Result> callable = () -> {
+            String realIp = HttpUtils.getRealIp(request);
+            String openid = userService.bindUserWithIp(realIp);
+            return Result.success(openid);
+        };
+        return callable.call();
     }
 }

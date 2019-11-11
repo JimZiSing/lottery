@@ -5,13 +5,10 @@ import org.javatribe.lottery.entity.User;
 import org.javatribe.lottery.mapper.UserMapper;
 import org.javatribe.lottery.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.EnableCaching;
-//import org.springframework.data.redis.core.RedisTemplate;
-//import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * userService层接口实现
@@ -53,5 +50,19 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<User> selectUsers() {
         return userMapper.queryAllUser();
+    }
+
+    @Override
+    public String bindUserWithIp(String realIp) {
+        User user = userMapper.queryUserByIp(realIp);
+        if (user != null){
+            return user.getOpenid();
+        }else {
+            user = new User();
+        }
+        user.setOpenid(UUID.randomUUID().toString().replaceAll("-",""));
+        user.setIp(realIp);
+        int i = userMapper.insertUser(user);
+        return user.getOpenid();
     }
 }

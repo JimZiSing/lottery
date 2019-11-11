@@ -40,5 +40,9 @@ public interface IWxService {
      */
     WxMessage receiveWxMessage(WxMessage msg);
 
+    /**
+     * 获取二维码的凭证
+     * @return
+     */
     String getQRCodeTicket();
 }

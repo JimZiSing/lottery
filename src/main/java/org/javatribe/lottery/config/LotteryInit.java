@@ -1,7 +1,6 @@
 package org.javatribe.lottery.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.javatribe.lottery.entity.Item;
 import org.javatribe.lottery.mapper.ItemMapper;
 import org.javatribe.lottery.utils.LotteryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +27,11 @@ public class LotteryInit implements ApplicationRunner {
             LotteryUtils.itemList = new CopyOnWriteArrayList<>(list);
             int size = LotteryUtils.itemList.size();
             for (int i = 0; i < size; i++) {
-//                int surplus = LotteryUtils.surplus.get();
                 int surplus = LotteryUtils.itemList.get(i).getSurplus();
                 LotteryUtils.surplus.addAndGet(surplus);
                 LotteryUtils.itemList.get(i).setSurplus1(new AtomicInteger(surplus));
                 LotteryUtils.totalAmount += LotteryUtils.itemList.get(i).getAmount();
             }
-            System.out.println(LotteryUtils.surplus.get());
-            System.out.println(LotteryUtils.totalAmount);
         }
     }
 

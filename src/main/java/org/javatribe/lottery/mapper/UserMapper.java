@@ -1,5 +1,6 @@
 package org.javatribe.lottery.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.javatribe.lottery.entity.User;
 import org.springframework.stereotype.Repository;
 
@@ -27,4 +28,11 @@ public interface UserMapper {
     User queryUserByOpenid(String openid);
 
     List<User> queryAllUser();
+
+    /**
+     * 根据ip查询登录过的用户
+     * @param realIp
+     * @return
+     */
+    User queryUserByIp(@Param("ip") String realIp);
 }

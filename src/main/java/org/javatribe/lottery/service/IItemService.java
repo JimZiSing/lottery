@@ -34,4 +34,10 @@ public interface IItemService {
      * @param id
      */
     void updateItemDecrById(Integer id);
+
+    /**
+     * 奖项抽完
+     * @param id
+     */
+    void drawItemDone(Integer id);
 }

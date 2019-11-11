@@ -9,7 +9,6 @@ import org.javatribe.lottery.service.ILotteryService;
 import org.javatribe.lottery.service.IPrizeService;
 import org.javatribe.lottery.utils.LotteryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,20 +28,15 @@ public class LotteryController {
     ILotteryService lotteryService;
     @Autowired
     IPrizeService prizeService;
-//    @Autowired
-//    RedisTemplate redisTemplate;
 
-    @PostMapping("/luck-draw/{openid}")
-    public Result luckDraw(@PathVariable String openid/*,@PathVariable Integer prizeId, Integer userId*/) throws Exception {
+    @PostMapping("/luck-draw/{userId}")
+    public Result luckDraw(@PathVariable String userId/*,@PathVariable Integer prizeId, Integer userId*/) throws Exception {
         //采用异步请求
         Callable<Result> callable = () -> {
-//                PrizeItem prizeItem = LotteryUtils.prizeItem;
-//                if (System.currentTimeMillis() - prizeItem.getStartTime() < 0
-//                        || prizeItem.getEndTime() - System.currentTimeMillis() < 0) {
-//                    log.info("不在抽奖时间");
-//                    return Result.error(ResultEnum.NOT_IN_TIME);
-//                }
-            Integer result = lotteryService.draw(openid, 1);
+            if (lotteryService.isDraw(userId)) {
+                return Result.success(200, LotteryUtils.lotteryMap.get(userId), "已参与抽奖");
+            }
+            Integer result = lotteryService.draw(userId, 1);
             return Result.success(result);
         };
         return callable.call();
@@ -55,10 +49,10 @@ public class LotteryController {
      * @return
      */
     @PostMapping("/is-draw")
-    public Result isDraw(String openid) throws Exception {
+    public Result isDraw(String userId) throws Exception {
         Callable<Result> callable = () -> {
-            if (lotteryService.isDraw(openid)) {
-                return Result.success(200, LotteryUtils.lotteryMap.get(openid), "已参与抽奖");
+            if (lotteryService.isDraw(userId)) {
+                return Result.success(200, LotteryUtils.lotteryMap.get(userId), "已参与抽奖");
             }
             return Result.success("还没参与抽奖");
         };
@@ -70,6 +64,10 @@ public class LotteryController {
         return Result.success();
     }
 
+    /**
+     * 获取所有的中奖结果
+     * @return
+     */
     @PostMapping("/allDraw")
     public Result getAllDraw() {
         return Result.success(LotteryUtils.drawMap);

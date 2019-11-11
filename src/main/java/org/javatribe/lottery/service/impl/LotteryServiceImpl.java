@@ -38,6 +38,8 @@ public class LotteryServiceImpl implements ILotteryService {
     private IWxService wxService;
     @Autowired
     private ApplicationContext applicationContext;
+
+
     private ILotteryService lotteryService;
 
     private ReentrantLock lock = new ReentrantLock();
@@ -46,9 +48,14 @@ public class LotteryServiceImpl implements ILotteryService {
     private ReentrantReadWriteLock.WriteLock writeLock;
 
 
+    /**
+     * 初始化方法
+     */
     @PostConstruct
     public void init() {
+        //获取本类的bean
         lotteryService = applicationContext.getBean(ILotteryService.class);
+        //初始化锁
         readWriteLock = new ReentrantReadWriteLock();
         readLock = readWriteLock.readLock();
         writeLock = readWriteLock.writeLock();
@@ -58,122 +65,72 @@ public class LotteryServiceImpl implements ILotteryService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String luckDraw(String openid, Integer userId, PrizeItem prizeItem) {
-//        Integer prizeId = prizeItem.getId();
-//
-//        String prize = (String) redisTemplate.boundValueOps("DRAW:" + prizeId + ":" + userId).get();
-//        if (null != prize || null != lotteryMapper.queryLotteryByUserIdAndPrizeId(userId, prizeId)) {
-//            log.info("已参与抽奖！");
-//            return "已参与抽奖！";
-//        }
-//        if (prizeService.selectPrizeSurplus(prizeId) <= 0) {
-//            Lottery lottery = new Lottery();
-//            lottery.setPrizeId(prizeId);
-//            lottery.setItemId(0);
-//            lottery.setUserId(userId);
-//            lottery.setCreateTime(System.currentTimeMillis());
-//            try {
-//                System.out.println(lottery);
-//                lotteryMapper.insertLottery(lottery);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            redisTemplate.boundValueOps("DRAW:" + prizeId + ":" + userId).set("很遗憾，本次未中奖"/*,
-//                    prizeItem.getEndTime() - System.currentTimeMillis()*/);
-//            log.info("用户:" + userId + " 本次未中奖");
-//            return "很遗憾，本次未中奖";
-//        }
-//
-//        List<Item> items = prizeItem.getItems();
-//        int size = items.size();
-//        int total = 0;
-//        for (int i = 0; i < size; i++) {
-//            Item item = items.get(i);
-//            total += item.getAmount();
-//        }
-//        Random random = new Random();
-//        int i = random.nextInt(100);
-//        long l = openid.hashCode() + System.currentTimeMillis();
-//        Lottery lottery = new Lottery();
-//        lottery.setPrizeId(prizeId);
-//        lottery.setUserId(userId);
-//        lottery.setCreateTime(System.currentTimeMillis());
-//        if (Math.abs(l) % total == i % total) {
-//            int level = random.nextInt(size);
-//            Item item = items.get(level);
-//            synchronized (LOCK) {
-//                if (prizeService.selectPrizeSurplus(prizeId) > 0) {
-//                    redisTemplate.opsForValue().decrement("PRIZE_TOTAL_SURPLUS:" + prizeId);
-//                    redisTemplate.boundValueOps("DRAW:" + prizeId + ":" + userId).set(item.getItemName()/*,
-//                            prizeItem.getEndTime() - System.currentTimeMillis()*/);
-//                    lottery.setItemId(item.getId());
-//                    log.info("用户:" + userId + " 获得：" + item.getItemName());
-//                } else {
-//                    redisTemplate.boundValueOps("DRAW:" + prizeId + ":" + userId).set("很遗憾，本次未中奖");
-//                    lottery.setItemId(0);
-//                    log.info("用户:" + userId + " 本次未中奖");
-////                    return "很遗憾，本次未中奖";
-//                }
-//            }
-//            try {
-//                lotteryMapper.insertLottery(lottery);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            return lottery.getItemId() == 0 ? "很遗憾，本次未中奖" : "恭喜你获得：" + item.getItemName();
-////            return "恭喜你获得：" + item.getItemName();
-//        } else {
-//            lottery.setItemId(0);
-//            lotteryMapper.insertLottery(lottery);
-//            redisTemplate.boundValueOps("DRAW:" + prizeId + ":" + userId).set("很遗憾，本次未中奖");
-//            log.info("用户:" + userId + " 本次未中奖");
-//            return "很遗憾，本次未中奖";
-//        }
         return null;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer draw(String openid, Integer prizeId) {
-        User user = userService.selectUserByOpenid(openid);
-        Integer userId = user.getId();
-        if (LotteryUtils.surplus.get() <= 0) {
 
+        //判断抽奖是否结束
+        if (LotteryUtils.surplus.get() <= 0) {
             LotteryUtils.lotteryMap.put(openid, -1);
             return -1;
         }
+        //查询用户信息，获取用户id
+        User user = userService.selectUserByOpenid(openid);
+        Integer userId = user.getId();
 
+        //主要抽奖逻辑
         List<Item> itemList = LotteryUtils.itemList;
         Random random = new Random();
+        //用openid取哈希值加上当前时间戳
+        long hash = openid.hashCode() + System.currentTimeMillis();
+        //取一个随机值
         int ran = random.nextInt(LotteryUtils.totalAmount) + 1;
-        long l = openid.hashCode() + System.currentTimeMillis();
-        if (Math.abs(l) % ran < ran % LotteryUtils.totalAmount) {
+        //用哈希值对随机值取余，如果小于随机值取余奖项总数，初步判定为中将
+        if (Math.abs(hash) % ran < ran % LotteryUtils.totalAmount) {
 //        if (Math.abs(l) % ran <= LotteryUtils.surplus.get() * 2) {
+            //取随机值来判断中奖等级
             int level = random.nextInt(itemList.size());
             Item item = itemList.get(level);
-
             try {
+                //加上写锁
                 writeLock.lock();
+                // 判断所中的奖项是否还有，还有即中奖，否则不中奖
                 if (LotteryUtils.surplus.get() > 0 && item.getSurplus1().get() > 0) {
+                    //设置中奖信息
                     Lottery lottery = new Lottery();
                     lottery.setPrizeId(prizeId);
                     lottery.setUserId(userId);
                     lottery.setCreateTime(System.currentTimeMillis());
                     lottery.setItemId(item.getId());
+                    //剩余总奖项数减一
                     int surplus = LotteryUtils.surplus.decrementAndGet();
-                    itemService.updateItemDecrById(item.getId());
+
+                    //当前奖项剩余减一
                     int i = item.getSurplus1().decrementAndGet();
+                    //在map中保存中奖信息
                     LotteryUtils.drawMap.put(openid, lottery);
                     LotteryUtils.lotteryMap.put(openid, item.getId());
                     log.info("用户:" + openid + " 获得：" + item.getItemName());
+                    //当剩余奖项为0，一次修改数据库
+                    if (i == 0){
+                        itemService.drawItemDone(item.getId());
+                    }
+                    //当所有奖项抽完，统一写入数据库
                     if (surplus == 0) {
                         lotteryService.addLotteryList();
                     }
+                    //返回中奖id
                     return item.getId();
                 } else {
+                    //不中奖，记录不中奖
                     LotteryUtils.lotteryMap.put(openid, -1);
                     return -1;
                 }
             } finally {
+                //释放锁
                 writeLock.unlock();
             }
         }
@@ -189,6 +146,7 @@ public class LotteryServiceImpl implements ILotteryService {
         } finally {
             readLock.unlock();
         }
+        //判断是否已经抽奖，已经抽奖就直接返回结果
         if (null != prize) {
             return true;
         }
@@ -198,6 +156,7 @@ public class LotteryServiceImpl implements ILotteryService {
     @Override
     @Async("taskExecutor")
     public void addLotteryList() {
+        //异步写入结果
         Map map = LotteryUtils.drawMap;
         lotteryMapper.insertLotteryList(map);
     }

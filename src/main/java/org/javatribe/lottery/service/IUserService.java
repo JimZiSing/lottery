@@ -15,4 +15,11 @@ public interface IUserService {
     User selectUserByOpenid(String openid);
 
     List<User> selectUsers();
+
+    /**
+     * 记录用户ip
+     * @param realIp
+     * @return
+     */
+    String bindUserWithIp(String realIp);
 }

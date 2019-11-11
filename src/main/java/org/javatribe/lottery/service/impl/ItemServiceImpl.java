@@ -39,4 +39,9 @@ public class ItemServiceImpl implements IItemService {
         itemMapper.updateItemDecrById(id);
 
     }
+
+    @Override
+    public void drawItemDone(Integer id) {
+        itemMapper.updateItemAmountTo0(id);
+    }
 }

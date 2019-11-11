@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public interface ILotteryService {
     /**
-     * 抽奖方法
+     * 抽奖方法,没在本次抽奖中使用
      * @param openid
      * @param prizeId
      * @param prizeItem
@@ -37,6 +37,9 @@ public interface ILotteryService {
      */
     boolean isDraw(String openid);
 
+    /**
+     * 向数据库写入抽奖结果
+     */
     @Async("taskExecutor")
     void addLotteryList();
 }
